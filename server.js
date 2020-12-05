@@ -44,13 +44,16 @@ function fetchOngoing(nowPlaying){
 		console.log("loading", url)
 		setTimeout(_ => fetch(url).then(response => response.text().then(content => {
 			allPgns[i] = content
-			console.log("loaded", allPgns[i])
+			console.log("loaded", i)
 		})), i * 2000)
 	}
 	
 	for(let i = nowPlaying.length; i < maxGames; i++){
-		if(i < cachedPgns.length){
-			allPgns[i] = cachedPgns[i - nowPlaying.length]
+		let index = i - nowPlaying.length
+		
+		if(index < cachedPgns.length){
+			console.log("setting from cache", index)
+			allPgns[i] = cachedPgns[index]
 		}
 	}
 }
@@ -62,21 +65,21 @@ function fetchNowPlaying(){
 		}
 	}).then(response => response.text().then(content => {
 		let blob = JSON.parse(content)		
-		let nowPlaying = blob.nowPlaying
-		console.log(nowPlaying)
+		let nowPlaying = blob.nowPlaying		
 		if(nowPlaying.length > maxGames) nowPlaying = nowPlaying.slice(0, maxGames)
+		console.log("now playing", nowPlaying.length)
 		fetchOngoing(nowPlaying)
 	}))	
 }
 
 if(process.env.TOKEN){
-	fetchNowPlaying()
-	
 	if(relayUrl) fetch(relayUrl).then(response => response.text().then(content => {
-		let cachedPgns = content.split("\n\n")
+		cachedPgns = content.split("\n\n\n")
 		
-		console.log("fetched cache", cachedPgns)
+		console.log("fetched cache", cachedPgns.length)
 	}))	
+	
+	setTimeout(_ => fetchNowPlaying(), 10000)
 	
 	setInterval(_ => {
 		fetchNowPlaying()
