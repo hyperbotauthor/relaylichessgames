@@ -15,7 +15,7 @@ Your lichess API access token ( required if you want to relay your ongoing games
 
 ### MAX_GAMES
 
-Maximum number of your ongoing games to relay ( default : 10 ).
+Maximum number of your ongoing games to relay ( default : 1 ).
 
 ## Usage
 

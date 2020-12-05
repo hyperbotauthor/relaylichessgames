@@ -9,7 +9,7 @@ const PORT = parseInt(process.env.PORT || "3000")
 const APP_NAME = "Express Hello World"
 
 const relayUrl = process.env.RELAY_URL
-const maxGames = parseInt(process.env.MAX_GAMES || "10")
+const maxGames = parseInt(process.env.MAX_GAMES || "1")
 const broadcastId = process.env.BROADCAST_ID
 
 let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Blitz game"]
