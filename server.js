@@ -38,6 +38,14 @@ let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Bli
 
 let cachedPgns = []
 
+function fetchCache(){
+	if(relayUrl) fetch(relayUrl).then(response => response.text().then(content => {
+		cachedPgns = content.split("\n\n\n")
+		
+		console.log("fetched cache", cachedPgns.length)
+	}))	
+}
+
 function fetchOngoing(nowPlaying){
 	if(broadcastId){
 		let burl = `https://lichess.org/broadcast/-/${broadcastId}/push`
@@ -50,7 +58,11 @@ function fetchOngoing(nowPlaying){
 				Authorization: `Bearer ${process.env.TOKEN}`
 			},
 			body: allPgns.join("\n\n").replace(/\n\n+/g, "\n\n")
-		}).then(response => response.text().then(content => console.log("push response", content)))
+		}).then(response => response.text().then(content => {
+			console.log("push response", content)
+			
+			fetchCache()
+		}))
 	}
 	
 	for(let i = 0; i < nowPlaying.length; i++){
@@ -87,17 +99,15 @@ function fetchNowPlaying(){
 }
 
 if(process.env.TOKEN){
-	if(relayUrl) fetch(relayUrl).then(response => response.text().then(content => {
-		cachedPgns = content.split("\n\n\n")
-		
-		console.log("fetched cache", cachedPgns.length)
-	}))	
+	fetchCache()
 	
-	setTimeout(_ => fetchNowPlaying(), 10000)
-	
-	setInterval(_ => {
+	setTimeout(_ => {
 		fetchNowPlaying()
-	}, maxGames * 3000)
+		
+		setInterval(_ => {
+			fetchNowPlaying()
+		}, maxGames * 3000)
+	}, 10000)
 }
 
 app.get('/', (req, res) => {
