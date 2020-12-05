@@ -8,7 +8,7 @@ const PORT = parseInt(process.env.PORT || "3000")
 
 const APP_NAME = "Express Hello World"
 
-const relayUrl = process.env.RELAY_URL || "https://lichess.org/api/user/YoBot_v2/current-game"
+const relayUrl = process.env.RELAY_URL
 const maxGames = parseInt(process.env.MAX_GAMES || "10")
 
 let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Blitz game"]
@@ -35,6 +35,8 @@ let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Bli
 1. d4 Nf6 2. c4 e6 3. Nf3 d5 4. Nc3 Be7 5. Bf4 { D37 Queen's Gambit Declined: Harrwitz Attack } dxc4 6. e3 Nh5 7. Be5 f6 8. Bg3 Nxg3 9. hxg3 b5 10. Nxb5 c6 11. Nc3 Qb6 12. Bxc4 Qxb2 13. Ne2 Qb4+ 14. Nd2 e5 15. Qc2 exd4 16. Nxd4 c5 17. Rb1 Qxb1+ 18. Nxb1 cxd4 19. Qe4 dxe3 20. Qxa8 exf2+ 21. Kxf2 Bc5+ 22. Kf3 Bd6 23. Re1+ Kf8 24. Qd5 Bg4+ 25. Kxg4 h5+ 26. Kf3 Bxg3 27. Qf7# { White wins by checkmate. } 1-0
 `)
 
+let cachedPgns = []
+
 function fetchOngoing(nowPlaying){
 	for(let i = 0; i < nowPlaying.length; i++){
 		let game = nowPlaying[i]
@@ -44,6 +46,12 @@ function fetchOngoing(nowPlaying){
 			allPgns[i] = content
 			console.log("loaded", allPgns[i])
 		})), i * 2000)
+	}
+	
+	for(let i = nowPlaying.length; i < maxGames; i++){
+		if(i < cachedPgns.length){
+			allPgns[i] = cachedPgns[i - nowPlaying.length]
+		}
 	}
 }
 
@@ -64,12 +72,24 @@ function fetchNowPlaying(){
 if(process.env.TOKEN){
 	fetchNowPlaying()
 	
+	if(relayUrl) fetch(relayUrl).then(response => response.text().then(content => {
+		let cachedPgns = content.split("\n\n")
+		
+		console.log("fetched cache", cachedPgns)
+	}))	
+	
 	setInterval(_ => {
 		fetchNowPlaying()
 	}, maxGames * 3000)
 }
 
 app.get('/', (req, res) => {
+	if(!relayUrl){
+		res.send("no relay url")	
+		
+		return
+	}
+	
 	fetch(relayUrl).then(response => response.text().then(content => {
 		res.send(content)
 	}))	

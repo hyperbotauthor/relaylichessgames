@@ -23,4 +23,4 @@ Start server with `node server.js`.
 
 Endpoint `/` path will relay the games you specified in RELAY_URL.
 
-If you provide your API access token, then endpoint `/ongoing` will relay your ongoing games.
+If you provide your API access token, then endpoint `/ongoing` will relay your ongoing games. An attempt will be made to initialize games from RELAY_URL.
