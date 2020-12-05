@@ -10,6 +10,7 @@ const APP_NAME = "Express Hello World"
 
 const relayUrl = process.env.RELAY_URL
 const maxGames = parseInt(process.env.MAX_GAMES || "10")
+const broadcastId = process.env.BROADCAST_ID
 
 let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Blitz game"]
 [Site "https://lichess.org/wjHniyF7"]
@@ -38,6 +39,20 @@ let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Bli
 let cachedPgns = []
 
 function fetchOngoing(nowPlaying){
+	if(broadcastId){
+		let burl = `https://lichess.org/broadcast/-/${broadcastId}/push`
+		
+		console.log("pushing to", burl)
+		
+		fetch(burl, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${process.env.TOKEN}`
+			},
+			body: allPgns.join("\n\n").replace(/\n\n+/g, "\n\n")
+		}).then(response => response.text().then(content => console.log("push response", content)))
+	}
+	
 	for(let i = 0; i < nowPlaying.length; i++){
 		let game = nowPlaying[i]
 		const url = `https://lichess.org/game/export/${game.gameId}`
@@ -51,8 +66,7 @@ function fetchOngoing(nowPlaying){
 	for(let i = nowPlaying.length; i < maxGames; i++){
 		let index = i - nowPlaying.length
 		
-		if(index < cachedPgns.length){
-			console.log("setting from cache", index)
+		if(index < cachedPgns.length){			
 			allPgns[i] = cachedPgns[index]
 		}
 	}
