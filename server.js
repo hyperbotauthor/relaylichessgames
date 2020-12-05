@@ -32,7 +32,7 @@ let allPgns = Array(maxGames).fill(process.env.DEFAULT_PGN || `[Event "Rated Bli
 [Termination "Normal"]
 [Annotator "lichess.org"]
 
-1. d4 Nf6 2. c4 e6 3. Nf3 d5 4. Nc3 Be7 5. Bf4 { D37 Queen's Gambit Declined: Harrwitz Attack } dxc4 6. e3 Nh5 7. Be5 f6 8. Bg3 Nxg3 9. hxg3 b5 10. Nxb5 c6 11. Nc3 Qb6 12. Bxc4 Qxb2 13. Ne2 Qb4+ 14. Nd2 e5 15. Qc2 exd4 16. Nxd4 c5 17. Rb1 Qxb1+ 18. Nxb1 cxd4 19. Qe4 dxe3 20. Qxa8 exf2+ 21. Kxf2 Bc5+ 22. Kf3 Bd6 23. Re1+ Kf8 24. Qd5 Bg4+ 25. Kxg4 h5+ 26. Kf3 Bxg3 27. Qf7# { White wins by checkmate. } 1-0")
+1. d4 Nf6 2. c4 e6 3. Nf3 d5 4. Nc3 Be7 5. Bf4 { D37 Queen's Gambit Declined: Harrwitz Attack } dxc4 6. e3 Nh5 7. Be5 f6 8. Bg3 Nxg3 9. hxg3 b5 10. Nxb5 c6 11. Nc3 Qb6 12. Bxc4 Qxb2 13. Ne2 Qb4+ 14. Nd2 e5 15. Qc2 exd4 16. Nxd4 c5 17. Rb1 Qxb1+ 18. Nxb1 cxd4 19. Qe4 dxe3 20. Qxa8 exf2+ 21. Kxf2 Bc5+ 22. Kf3 Bd6 23. Re1+ Kf8 24. Qd5 Bg4+ 25. Kxg4 h5+ 26. Kf3 Bxg3 27. Qf7# { White wins by checkmate. } 1-0
 `)
 
 function fetchOngoing(nowPlaying){
